@@ -1,227 +1,300 @@
+import Utility.CustomVariables;
+import Utility.UtilityMethods;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.*;
 
+//TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
+// click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
 public class Main {
+    static String bookingId;
+    static JTextField username_field, date_of_journey_field, age_field, source_field,  gender_field,destination_field, email_field, ticket_price_field, mobile_field, seat_field, deleteBookingIdField;
+    static boolean isUpdate = true;
     public static void main(String[] args) {
-        //establish connection
-        String url = "jdbc:mysql://localhost:3306/railwaybookingdb";
-        String username = "root";
-        String password = "";
+        //TIP Press <shortcut actionId="ShowIntentionActions"/> with your caret at the highlighted text
+        // to see how IntelliJ IDEA suggests fixing it.
+        //store the url,username,password in string object of database
+
+        //createRailwayBookingFrame in java
+        createRailwayBooking();
+    }
+
+    private static void createRailwayBooking() {
+        CustomVariables.databaseUrl ="jdbc:mysql://localhost:3306/railwaybookingdb";
+        CustomVariables.username="root";
+        CustomVariables.password="";
+
         try {
-            Connection connection = DriverManager.getConnection(url,username,password);
-            System.out.println("DB connected");
+            UtilityMethods.createConnection(CustomVariables.databaseUrl,
+                    CustomVariables.username, CustomVariables.password);
 
-            JFrame frame = new JFrame();
+            JFrame frame=new JFrame("Railway Booking System");
 
-            JLabel personalDetailLabel = new JLabel("Personal Details");
-            personalDetailLabel.setForeground(Color.green);
-            personalDetailLabel.setBounds(30, 10, 120, 50);
-            frame.add(personalDetailLabel);
+            JLabel personal_label=new JLabel("Personal Details");
+            personal_label.setBounds(10,10,120,30);
+            frame.add(personal_label);
 
-            JLabel ticketDetailsLabel = new JLabel("Ticket Details");
-            ticketDetailsLabel.setForeground(Color.green);
-            ticketDetailsLabel.setBounds(300, 10, 120, 50);
-            frame.add(ticketDetailsLabel);
+            JLabel ticket_details_label=new JLabel("Ticket Details");
+            ticket_details_label.setBounds(310,10,120,30);
+            frame.add(ticket_details_label);
 
-            JLabel usernameLabel = new JLabel("Username");
-            usernameLabel.setBounds(10, 50, 120, 40);
-            frame.add(usernameLabel);
+            JLabel username_label=new JLabel("Add Username");
+            username_label.setBounds(10,50,120,30);
+            frame.add(username_label);
 
-            JLabel dateOfJourneyLabel = new JLabel("DOJ");
-            dateOfJourneyLabel.setBounds(260, 50, 120, 40);
-            frame.add(dateOfJourneyLabel);
+            username_field=new JTextField();
+            username_field.setBounds(130,50,100,30);
+            frame.add(username_field);
 
-            JTextField usernameTextField = new JTextField();
-            usernameTextField.setBounds(100, 60, 120, 30);
-            frame.add(usernameTextField);
+            JLabel date_of_journey_label=new JLabel("Date Of Journey");
+            date_of_journey_label.setBounds(310,50,120,30);
+            frame.add(date_of_journey_label);
 
-            JTextField dateOfJourneyTextField = new JTextField();
-            dateOfJourneyTextField.setBounds(360, 60, 120, 30);
-            frame.add(dateOfJourneyTextField);
-
-            JLabel ageLabel = new JLabel("Age");
-            ageLabel.setBounds(10, 90, 120, 40);
-            frame.add(ageLabel);
-
-            JLabel sourceLabel = new JLabel("Source");
-            sourceLabel.setBounds(260, 90, 120, 40);
-            frame.add(sourceLabel);
-
-            JTextField ageTextField = new JTextField();
-            ageTextField.setBounds(100, 100, 120, 30);
-            frame.add(ageTextField);
-
-            JTextField sourceTextField = new JTextField();
-            sourceTextField.setBounds(360, 100, 120, 30);
-            frame.add(sourceTextField);
-
-            JLabel genderLabel = new JLabel("Gender");
-            genderLabel.setBounds(10, 130, 120, 40);
-            frame.add(genderLabel);
-
-            JLabel destinationLabel = new JLabel("Destination");
-            destinationLabel.setBounds(260, 130, 120, 40);
-            frame.add(destinationLabel);
-
-            JTextField genderTextField = new JTextField();
-            genderTextField.setBounds(100, 140, 120, 30);
-            frame.add(genderTextField);
-
-            JTextField destinationTextField = new JTextField();
-            destinationTextField.setBounds(360, 140, 120, 30);
-            frame.add(destinationTextField);
-
-            JLabel mobileNumberLabel = new JLabel("Mobile No.");
-            mobileNumberLabel.setBounds(10, 170, 120, 40);
-            frame.add(mobileNumberLabel);
-
-            JLabel ticketPriceLabel = new JLabel("Ticket Price");
-            ticketPriceLabel.setBounds(260, 170, 120, 40);
-            frame.add(ticketPriceLabel);
-
-            JTextField mobileNumberTextField = new JTextField();
-            mobileNumberTextField.setBounds(100, 180, 120, 30);
-            frame.add(mobileNumberTextField);
-
-            JTextField ticketPriceTextField = new JTextField();
-            ticketPriceTextField.setBounds(360, 180, 120, 30);
-            frame.add(ticketPriceTextField);
-
-            JLabel emailLabel = new JLabel("Email");
-            emailLabel.setBounds(10, 210, 120, 40);
-            frame.add(emailLabel);
-
-            JLabel seatPreferenceLabel = new JLabel("Seat Preference");
-            seatPreferenceLabel.setBounds(260, 210, 120, 40);
-            frame.add(seatPreferenceLabel);
-
-            JTextField emailTextField = new JTextField();
-            emailTextField.setBounds(100, 220, 120, 30);
-            frame.add(emailTextField);
-
-            JTextField seatPreferenceTextField = new JTextField();
-            seatPreferenceTextField.setBounds(360, 220, 120, 30);
-            frame.add(seatPreferenceTextField);
-
-            JLabel messageLabel = new JLabel("Booking ID");
-            messageLabel.setBounds(10, 360, 120, 30);
-            frame.add(messageLabel);
-
-            JTextField bookingIdTextField = new JTextField();
-            bookingIdTextField.setBounds(80, 360, 50, 30);
-            frame.add(bookingIdTextField);
-
-            JButton bookTicketButton = new JButton("Book Ticket");
-            bookTicketButton.setBounds(120, 280, 120, 30);
-            bookTicketButton.setBackground(Color.pink);
-            frame.add(bookTicketButton);
-
-            bookTicketButton.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    try {
-                        String insertDetails = "INSERT INTO ticketbookingtb (username,age,gender,MobileNumber,Email,DOJ,Source,Destination,TicketPrice,SeatPreference) VALUES (?,?,?,?,?,?,?,?,?,?)";
-                        PreparedStatement statement = connection.prepareStatement(insertDetails);
-                        statement.setString(1, usernameTextField.getText());
-                        statement.setInt(2, Integer.parseInt(ageTextField.getText()));
-                        statement.setString(3, genderTextField.getText());
-                        statement.setString(4, mobileNumberTextField.getText());
-                        statement.setString(5, emailLabel.getText());
-                        statement.setString(6, dateOfJourneyTextField.getText());
-                        statement.setString(7, sourceTextField.getText());
-                        statement.setString(8, destinationTextField.getText());
-                        statement.setString(9, ticketPriceTextField.getText());
-                        statement.setString(10, seatPreferenceTextField.getText());
-                        statement.execute();
-                        JOptionPane.showMessageDialog(null,"Ticket booked");
-                        usernameTextField.setText(" ");
-                        ageTextField.setText(" ");
-                        genderTextField.setText(" ");
-                        mobileNumberTextField.setText(" ");
-                        emailTextField.setText(" ");
-                        dateOfJourneyTextField.setText(" ");
-                        sourceTextField.setText(" ");
-                        destinationTextField.setText(" ");
-                        ticketPriceTextField.setText(" ");
-                        seatPreferenceTextField.setText(" ");
-                    } catch (SQLException ex) {
-                        throw new RuntimeException(ex);
-                    }
-                }
-            });
-
-            JButton deleteTicketButton = new JButton("Delete Ticket");
-            deleteTicketButton.setBounds(250, 280, 120, 30);
-            deleteTicketButton.setBackground(Color.GRAY);
-            frame.add(deleteTicketButton);
-
-            deleteTicketButton.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    int bookingid =Integer.parseInt(bookingIdTextField.getText());
-                    String deleteQuery = "DELETE FROM ticketbookingtb WHERE bookingid =?";
-                    if(bookingid!=0){
-                        try {
-                            PreparedStatement statement = connection.prepareStatement(deleteQuery);
-                            statement.setInt(1,bookingid);
-                            statement.execute();
-                            JOptionPane.showMessageDialog(null,"Ticket deleted" );
-                            bookingIdTextField.setText(" ");
-                        } catch (SQLException ex) {
-                            throw new RuntimeException(ex);
-                        }
-                    }else JOptionPane.showMessageDialog(null,"the value can't be emply");
-                }
-            });
-            JButton updateTicketButton = new JButton("Update Ticket");
-            updateTicketButton.setBounds(120, 320, 120, 30);
-            updateTicketButton.setBackground(Color.lightGray);
-            frame.add(updateTicketButton);
-
-            updateTicketButton.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    try {
-                        int bookingid =Integer.parseInt(bookingIdTextField.getText());
-                        String updateQuery = "UPDATE ticketbookingtb SET username=?,age=?,gender=?,MobileNumber=?,Email=?,DOJ=?,Source=?,Destination=?,TicketPrice=?,SeatPreference=? WHERE bookingid =?";
-                        PreparedStatement statement =connection.prepareStatement(updateQuery);
-                        statement.setString(1, usernameTextField.getText());
-                        statement.setInt(2, Integer.parseInt(ageTextField.getText()));
-                        statement.setString(3, genderTextField.getText());
-                        statement.setString(4, mobileNumberTextField.getText());
-                        statement.setString(5, emailLabel.getText());
-                        statement.setString(6, dateOfJourneyTextField.getText());
-                        statement.setString(7, sourceTextField.getText());
-                        statement.setString(8, destinationTextField.getText());
-                        statement.setString(9, ticketPriceTextField.getText());
-                        statement.setString(10, seatPreferenceTextField.getText());
-                        statement.setInt(11,bookingid);
-                        int rowAffected = statement.executeUpdate();
-                        if (rowAffected>0){
-                            JOptionPane.showMessageDialog(null,"Ticket is updated");
-                        }
-                        else {
-                            JOptionPane.showMessageDialog(null,"Ticket not found");
-                        }
-                    } catch (SQLException ex) {
-                        throw new RuntimeException(ex);
-                    }
-                }
-            });
+            date_of_journey_field=new JTextField();
+            date_of_journey_field.setBounds(430,50,100,30);
+            frame.add(date_of_journey_field);
 
 
-            JLabel blankLabel = new JLabel(" ");
-            blankLabel.setBounds(280, 10, 120, 40);
-            frame.add(blankLabel);
+            JLabel age_label=new JLabel("Add Age");
+            age_label.setBounds(10,80,120,30);
+            frame.add(age_label);
 
-            frame.setVisible(true);
+            age_field=new JTextField();
+            age_field.setBounds(130,80,100,30);
+            frame.add(age_field);
+
+            JLabel source_label=new JLabel("Source");
+            source_label.setBounds(310,80,120,30);
+            frame.add(source_label);
+
+            source_field=new JTextField();
+            source_field.setBounds(430,80,100,30);
+            frame.add(source_field);
+
+
+            JLabel gender_label=new JLabel("Add Gender");
+            gender_label.setBounds(10,110,120,30);
+            frame.add(gender_label);
+
+            gender_field=new JTextField();
+            gender_field.setBounds(130,110,100,30);
+            frame.add(gender_field);
+
+            JLabel destination_label=new JLabel("Enter Destination");
+            destination_label.setBounds(310,110,120,30);
+            frame.add(destination_label);
+
+            destination_field=new JTextField();
+            destination_field.setBounds(430,110,100,30);
+            frame.add(destination_field);
+
+            JLabel email_label=new JLabel("Add Email:");
+            email_label.setBounds(10,140,120,30);
+            frame.add(email_label);
+
+            email_field=new JTextField();
+            email_field.setBounds(130,140,100,30);
+            frame.add(email_field);
+
+            JLabel ticket_price_label=new JLabel("Enter Ticket Price:");
+            ticket_price_label.setBounds(310,140,120,30);
+            frame.add(ticket_price_label);
+
+            ticket_price_field=new JTextField();
+            ticket_price_field.setBounds(430,140,100,30);
+            frame.add(ticket_price_field);
+
+            JLabel mobile_label=new JLabel("Add Mobile:");
+            mobile_label.setBounds(10,170,120,30);
+            frame.add(mobile_label);
+
+            mobile_field=new JTextField();
+            mobile_field.setBounds(130,170,100,30);
+            frame.add(mobile_field);
+
+            JLabel seat_label=new JLabel("Seat Preference:");
+            seat_label.setBounds(310,170,120,30);
+            frame.add(seat_label);
+
+            seat_field=new JTextField();
+            seat_field.setBounds(430,170,100,30);
+            frame.add(seat_field);
+
+
+            JButton bookButton = new JButton("Book Ticket");
+            bookButton.setBounds(30,220,120,30);
+            frame.add(bookButton);
+
+            //delete button to delete the data
+            JButton deleteButton = new JButton("Delete Ticket");
+            deleteButton.setBounds(140,220,120,30);
+            frame.add(deleteButton);
+
+            //update the booking
+            JButton updateButton = new JButton("Update Ticket");
+            updateButton.setBounds(260,220,120,30);
+            frame.add(updateButton);
+
+
+            frame.setSize(600,500);
             frame.setLayout(null);
-            frame.setSize(550, 500);
-        } catch (SQLException ex) {
-            throw new RuntimeException(ex);
+            frame.setVisible(true);
+            frame.getContentPane().setBackground(Color.GRAY);
+
+            //update the booking
+            updateButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+
+                    if (isUpdate)
+                    {
+                        bookingId= JOptionPane.showInputDialog("Enter Booking id to Update");
+                        fetchBooking(bookingId);
+                        isUpdate = false;
+                    }
+                    else{
+                        updateBooking(bookingId);
+                    }
+
+
+                }
+            });
+
+
+            deleteButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+
+                    String booking = JOptionPane.showInputDialog("Enter the booking Id");
+                    deleteBooking(booking);
+
+                }
+            });
+
+            bookButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    //book the user ticket
+                    try {
+                        insertBookingIntoDB();
+                    } catch (SQLException ex) {
+                        throw new RuntimeException(ex);
+                    }
+                }
+            });
+
+
+
+
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+
+
         }
+    }
+
+    private static void fetchBooking(String bookingId) {
+        //to select the data from database
+        String selectQuery = "select * from ticketbookingtb where id = ?";
+        try {
+            PreparedStatement preparedStatement = CustomVariables.connection.prepareStatement(selectQuery);
+            preparedStatement.setInt(1, Integer.parseInt(bookingId));
+            ResultSet rs = preparedStatement.executeQuery();
+
+            while ( rs.next())
+            {
+                username_field.setText(rs.getString("username"));
+                mobile_field.setText(rs.getString("mobile"));
+                age_field.setText(rs.getString("age"));
+                date_of_journey_field.setText(rs.getString("doj"));
+                email_field.setText(rs.getString("email"));
+                gender_field.setText(rs.getString("gender"));
+                source_field.setText(rs.getString("source"));
+                destination_field.setText(rs.getString("destination"));
+                ticket_price_field.setText(rs.getString("ticketprice"));
+                seat_field.setText(rs.getString("seatpreference"));
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private static void updateBooking(String bookingId) {
+
+
+        String updateQuery = "update ticketbookingtb set username = ?,age = ?,gender = ?, mobile = ?,email = ?,doj= ?,source=?,destination=?,ticketprice=?,seatpreference= ? where id = ?  ";
+        try {
+            PreparedStatement ps = CustomVariables.connection.prepareStatement(updateQuery);
+            ps.setString(1, username_field.getText());
+            ps.setInt(2, Integer.parseInt(age_field.getText()));
+            ps.setString(3, gender_field.getText());
+            ps.setString(4, mobile_field.getText());
+            ps.setString(5, email_field.getText());
+            ps.setString(6, date_of_journey_field.getText());
+            ps.setString(7, source_field.getText());
+            ps.setString(8, destination_field.getText());
+            ps.setString(9, ticket_price_field.getText());
+            ps.setString(10, seat_field.getText());
+            ps.setInt(11, Integer.parseInt(bookingId));
+            ps.executeUpdate();
+
+            JOptionPane.showMessageDialog(null, "ticket updated");
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private static void deleteBooking(String bookingId) {
+        String deleteQuery = "delete from ticketbookingtb where id = ?";
+        try {
+            PreparedStatement ps = CustomVariables.connection.prepareStatement(deleteQuery);
+            ps.setInt(1, Integer.parseInt(bookingId));
+            ps.executeUpdate();
+            JOptionPane.showMessageDialog(null, "Booking deleted");
+
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private static void insertBookingIntoDB() throws SQLException {
+        String insertQuery="insert into ticketbookingtb(username,age,gender, mobile,email,doj,source,destination,ticketprice,seatpreference ) values(?,?,?,?,?,?,?,?,?,?)";
+        PreparedStatement ps=CustomVariables.connection.prepareStatement(insertQuery);
+        ps.setString(1,username_field.getText());
+        ps.setInt(2, Integer.parseInt(age_field.getText()));
+        ps.setString(3,gender_field.getText());
+        ps.setString(4,mobile_field.getText());
+        ps.setString(5,email_field.getText());
+        ps.setString(6,date_of_journey_field.getText());
+        ps.setString(7,source_field.getText());
+        ps.setString(8,destination_field.getText());
+        ps.setString(9,ticket_price_field.getText());
+        ps.setString(10,seat_field.getText());
+        ps.execute();
+
+        JOptionPane.showMessageDialog(null,
+                "Booking has been confirmed");
+        //to clear the form
+        clearForm();
+    }
+
+    private static void clearForm() {
+        //to clear the form using Jtextfield
+        username_field.setText("");
+        email_field.setText("");
+        age_field.setText("");
+        gender_field.setText("");
+        mobile_field.setText("");
+        date_of_journey_field.setText("");
+        source_field.setText("");
+        destination_field.setText("");
+        seat_field.setText("");
+        ticket_price_field.setText("");
     }
 }
